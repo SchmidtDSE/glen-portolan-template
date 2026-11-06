@@ -1,0 +1,4 @@
+config.json
+.claude/
+.ipynb_checkpoints/
+.vscode/

@@ -1,5 +1,9 @@
 {
     "titiler_url": "https://titiler.nrp-nautilus.io",
+    "view": {
+        "center": [-77.3, 18.15],
+        "zoom": 8.2
+    },
     "default_basemap": "plain",
     "collections": [
         {
