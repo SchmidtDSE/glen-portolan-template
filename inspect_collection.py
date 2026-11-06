@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""Print what glen core will draw from a Portolan collection.
+"""Print what glen core will draw from a Portolan catalog or collection.
 
+    python3 inspect_collection.py https://example.org/catalog.json
     python3 inspect_collection.py https://example.org/catalog/roads/collection.json
+
+A catalog.json is followed through its child links to every collection.
 
 For each collection it lists the PMTiles layers, the published styles by the
 name `"style"` takes in layers-input.json, the COG assets with their band
@@ -43,9 +46,20 @@ def pmtiles_fields(url):
     return {layer["id"]: sorted(layer.get("fields", {})) for layer in meta.get("vector_layers", [])}
 
 
-def inspect(url):
-    c = fetch_json(url)
+def inspect(url, c=None):
+    c = c or fetch_json(url)
+    if c.get("type") == "Catalog":
+        print(f"# Catalog {c.get('id')}: {c.get('title', '')}\n")
+        for link in c.get("links", []):
+            if link.get("rel") == "child":
+                child = urljoin(url, link["href"])
+                try:
+                    inspect(child)
+                except Exception as e:  # keep going past one broken child
+                    print(f"# {child}: unreadable ({e})\n")
+        return
     print(f"# {c.get('id')}: {c.get('title', '')}")
+    print(f"  url: {url}")
     print(f"  license: {c.get('license', 'not stated')}")
     assets = c.get("assets", {})
     links = [l for l in c.get("links", []) if l.get("rel") == "pmtiles" or l.get("type") == PMTILES_TYPE]

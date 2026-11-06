@@ -12,10 +12,10 @@ You edit `layers-input.json`, the `<title>` in `index.html`, and the glen pin in
 
 ## Setup procedure
 
-1. Get the collection URLs. From a root `catalog.json`, follow its `child` links to each `collection.json`.
-2. Run `python3 inspect_collection.py <collection.json URL> ...` on each collection. It prints the PMTiles layers and their attribute names, the published styles by the name the `style` option takes, the COG assets with their band statistics, and the license. It needs only the Python standard library, plus `pip install pmtiles` to list attribute names.
-3. Write the `collections` list. Use the printed style names for `style` and the printed attribute names for `tooltip` and `default_filter`.
-4. Set `view`, `sidebar.title`, the `<title>` and the `welcome` examples. Write the examples with layer names and values that exist in the data.
+1. Get the root `catalog.json` URL. The [Portolan registry](https://www.portolan-sdi.org/registry) lists public catalogs; its **Copy address** button gives the URL. Setting only `catalog`, with no `collections`, already gives a working app over the whole catalog.
+2. Run `python3 inspect_collection.py <catalog.json or collection.json URL>`. Given a catalog, it follows the `child` links to every collection. For each it prints the PMTiles layers and their attribute names, the published styles by the name the `style` option takes, the COG assets with their band statistics, and the license. It needs only the Python standard library, plus `pip install pmtiles` to list attribute names.
+3. To choose, name and style the layers, write the `collections` list. Use the printed style names for `style` and the printed attribute names for `tooltip` and `default_filter`.
+4. Set `view`, `sidebar.title`, the `<title>`, `links` and the `welcome` examples. Write the examples with layer names and values that exist in the data.
 5. Serve the directory with `python -m http.server 8000` and open http://localhost:8000. Check that every layer appears in the layer panel, that each draws when switched on, and that the browser console has no `[Portolan]` warnings.
 
 ## Top-level fields in `layers-input.json`
@@ -30,6 +30,7 @@ You edit `layers-input.json`, the `<title>` in `index.html`, and the glen pin in
 | `default_basemap` | `"natgeo"`, `"satellite"` or `"plain"` |
 | `sidebar` | `{ "enabled": true, "title": "…", "chat_title": "…" }` |
 | `header` | Optional header band with logos and links; see the [GLEN configuration guide](https://github.com/SchmidtDSE/glen/blob/main/docs/guide/configuration.md) |
+| `links` | Header links. `github` adds a GitHub link; `contact` sets Contact us, an email address or URL, and defaults to `mailto:dse@berkeley.edu`; `data: false` removes the Data page link |
 | `theme` | `"light"`, `"dark"` or `"auto"` |
 | `welcome` | `{ "message": "…", "examples": ["…"] }`, shown when the chat opens |
 | `llm` | The model list; see below |

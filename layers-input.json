@@ -4,6 +4,9 @@
         "center": [-77.3, 18.15],
         "zoom": 8.2
     },
+    "links": {
+        "github": "https://github.com/SchmidtDSE/glen-portolan-template"
+    },
     "default_basemap": "plain",
     "collections": [
         {
