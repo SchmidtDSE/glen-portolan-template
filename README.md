@@ -100,10 +100,10 @@ OpenRouter applies zero data retention only when the account requires it, under 
 
 ## GLEN version
 
-`index.html` loads glen core from jsDelivr, pinned to one commit of `SchmidtDSE/glen`. Every `cdn.jsdelivr.net/gh/SchmidtDSE/glen@` URL in the file names the same ref, and they change together. The pin is currently a commit on the unmerged `core-portolan` branch; once glen core is in a release, it moves to that tag.
+`index.html` loads glen core from jsDelivr, pinned to a release of `SchmidtDSE/glen`, currently `v3.40.0`. Every `cdn.jsdelivr.net/gh/SchmidtDSE/glen@` URL in the file names the same tag, and they change together. [AGENTS.md](AGENTS.md) describes how to move the pin.
 
 ## More resources
 
-- [glen core](https://github.com/SchmidtDSE/glen/blob/core-portolan/core/README.md): how the app reads Portolan catalogs, its plugins and its limitations
+- [glen core](https://github.com/SchmidtDSE/glen/blob/v3.40.0/core/README.md): how the app reads Portolan catalogs, its plugins and its limitations
 - [Portolan specification](https://github.com/portolan-sdi/portolan-spec) and [Portolan CLI](https://cli.portolan-sdi.org/), for publishing a catalog of your own
 - [glen-template](https://github.com/SchmidtDSE/glen-template): the full GLEN app with SQL over MCP
