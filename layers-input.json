@@ -1,8 +1,11 @@
 {
     "titiler_url": "https://titiler.nrp-nautilus.io",
     "view": {
-        "center": [-77.3, 18.15],
-        "zoom": 8.2
+        "center": [
+            -90.245,
+            38.635
+        ],
+        "zoom": 11.2
     },
     "links": {
         "github": "https://github.com/SchmidtDSE/glen-portolan-template"
@@ -10,52 +13,129 @@
     "default_basemap": "plain",
     "collections": [
         {
-            "url": "https://storage.googleapis.com/carto-open-catalogs/ocha-cod-jamaica/main/parishes/collection.json",
-            "display_name": "Parishes",
+            "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/urban-development-and-planning/neighborhoods/collection.json",
+            "display_name": "Neighborhoods",
+            "group": "Boundaries",
+            "style": "styles/style-boundaries",
             "visible": true,
-            "tooltip": ["adm1_name", "T_TL"]
+            "tooltip": [
+                "NHD_NAME",
+                "NHD_NUM"
+            ]
         },
         {
-            "url": "https://storage.googleapis.com/carto-open-catalogs/hurricane-melissa-impact/main/building-damage-parishes/collection.json",
-            "display_name": "Building damage by parish",
-            "style": "graduated",
-            "group": "Hurricane Melissa"
+            "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/government/wards/collection.json",
+            "display_name": "Wards (2020)",
+            "group": "Boundaries",
+            "style": "styles/style-boundaries",
+            "tooltip": [
+                "DISTRICT"
+            ]
         },
         {
-            "url": "https://storage.googleapis.com/carto-open-catalogs/hurricane-melissa-impact/main/building-damage-h3/collection.json",
-            "display_name": "Building damage by H3 cell",
-            "style": "graduated",
-            "group": "Hurricane Melissa",
+            "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/demographics/holc-redlining/collection.json",
+            "display_name": "HOLC redlining grades (1930s)",
+            "group": "History",
+            "tooltip": [
+                "label",
+                "grade",
+                "category"
+            ]
+        },
+        {
+            "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/housing/market-value-analysis/collection.json",
+            "display_name": "Market value analysis (2024)",
+            "group": "Housing",
             "visible": true,
-            "tooltip": ["adm1_name", "share_damaged", "n_damaged", "n_buildings"]
+            "tooltip": [
+                "MVACluster",
+                "MSP2123_CA",
+                "PVacBuild"
+            ]
         },
         {
-            "url": "https://storage.googleapis.com/carto-open-catalogs/hurricane-melissa-impact/main/road-blockages/collection.json",
-            "display_name": "Road damage and blockages",
-            "style": "categorical",
-            "group": "Hurricane Melissa"
+            "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/urban-development-and-planning/vacancy-composite/collection.json",
+            "display_name": "Vacant parcels",
+            "group": "Housing",
+            "tooltip": [
+                "STREET_ADD",
+                "PROPERTY_T",
+                "OWNER_NAME",
+                "YEAR_BUILT"
+            ]
         },
         {
-            "url": "https://storage.googleapis.com/carto-open-catalogs/worldpop-jamaica/main/children-grid-1km/collection.json",
-            "display_name": "Children per 1 km cell",
-            "group": "Children in 2020 from WorldPop"
+            "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/urban-development-and-planning/parcels/collection.json",
+            "display_name": "Parcels by assessed value",
+            "group": "Housing",
+            "style": "styles/style-assessed-value",
+            "tooltip": [
+                "SITEADDR",
+                "AsdTotal",
+                "FirstYearBuilt",
+                "Zoning"
+            ]
         },
         {
-            "url": "https://storage.googleapis.com/carto-open-catalogs/worldpop-jamaica/main/children-0-19/collection.json",
-            "display_name": "Children aged 0 to 19 at 100 m",
-            "group": "Children in 2020 from WorldPop"
+            "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/demographics/acs-tracts/collection.json",
+            "display_name": "Census tracts (ACS)",
+            "group": "People",
+            "tooltip": [
+                "geoid",
+                "population",
+                "median_hh_income",
+                "pct_below_poverty"
+            ]
         },
         {
-            "url": "https://storage.googleapis.com/carto-open-catalogs/worldpop-jamaica/main/children-0-4/collection.json",
-            "display_name": "Children aged 0 to 4 at 100 m",
-            "group": "Children in 2020 from WorldPop"
+            "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/health/lead-service-lines/collection.json",
+            "display_name": "Lead service lines",
+            "group": "Health",
+            "tooltip": [
+                "address",
+                "utilstatus_desc",
+                "utilmaterial_desc"
+            ]
+        },
+        {
+            "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/law-safety-and-justice/tornado-damage-2025/collection.json",
+            "display_name": "May 2025 tornado damage",
+            "group": "Hazards",
+            "tooltip": [
+                "efscale",
+                "damage_txt",
+                "windspeed"
+            ]
+        },
+        {
+            "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/environment/floodplain/collection.json",
+            "display_name": "Floodplain",
+            "group": "Hazards",
+            "style": "styles/style-sfha",
+            "tooltip": [
+                "FLD_ZONE",
+                "SFHA_TF"
+            ]
         }
     ],
     "sidebar": {
         "enabled": true,
-        "title": "Jamaica after Hurricane Melissa",
+        "title": "St. Louis open data",
         "chat_title": "Chat"
     },
+    "plugins": [
+        {
+            "url": "plugins/geo-query-wasm.js",
+            "options": {
+                "include": [
+                    "query"
+                ],
+                "worker": {
+                    "discovery": false
+                }
+            }
+        }
+    ],
     "auto_approve": true,
     "llm": {
         "user_provided": true,
@@ -80,12 +160,12 @@
         ]
     },
     "welcome": {
-        "message": "I can show, filter and colour the layers on this map of Jamaica after Hurricane Melissa. Try asking:",
+        "message": "I can show, filter and colour the layers on this map of St. Louis, and run SQL over their data in your browser. Try asking:",
         "examples": [
-            "Show building damage by H3 cell and zoom to it",
-            "Show only cells where more than half the assessed buildings were damaged",
-            "Colour the parishes by name",
-            "Show children aged 0 to 4 with the magma colour map"
+            "Show the 1930s redlining grades over the 2024 market value clusters",
+            "Which ten neighborhoods have the most vacant parcels?",
+            "How many service lines are lead, and how many are still unknown?",
+            "Show the May 2025 tornado damage coloured by EF scale and zoom to it"
         ]
     }
 }

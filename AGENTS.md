@@ -4,11 +4,11 @@ This file is the configuration reference for apps made from this template. It is
 
 ## Repository relationship
 
-An app made from this template is two static files. `index.html` loads glen core from jsDelivr, pinned to a commit or tag of [SchmidtDSE/glen](https://github.com/SchmidtDSE/glen), and glen core reads `layers-input.json` from the same directory. The map, chat, agent loop and map tools all live in glen's `core/` directory, so a change to how the app behaves belongs there, not here.
+An app made from this template is a few static files. `index.html` loads glen core from jsDelivr, pinned to a commit or tag of [SchmidtDSE/glen](https://github.com/SchmidtDSE/glen), and glen core reads `layers-input.json` from the same directory. `plugins/geo-query-wasm.js` adds SQL: it starts [geo-query-wasm](https://github.com/SchmidtDSE/geo-query-wasm) in a Web Worker through `plugins/geo-query-worker.js`, which imports the worker from jsDelivr at a pinned commit. A page may start a Worker only from its own origin, hence the local file. The map, chat, agent loop and map tools all live in glen's `core/` directory, so a change to how the app behaves belongs there, not here.
 
 ## Configuration scope
 
-You edit `layers-input.json`, the `<title>` in `index.html`, and the glen pin in `index.html`. You do not write JavaScript or copy glen's modules into the app.
+You edit `layers-input.json`, the `<title>` in `index.html`, the glen pin in `index.html`, and the geo-query-wasm pin in `plugins/geo-query-worker.js`. You do not write other JavaScript or copy glen's modules into the app.
 
 ## Setup procedure
 
@@ -37,7 +37,7 @@ You edit `layers-input.json`, the `<title>` in `index.html`, and the glen pin in
 | `auto_approve` | Run tool calls without asking the visitor; default true |
 | `geocoder` | Geocoder settings; place-name search is on by default |
 | `system_prompt_url` | A Markdown file that replaces glen core's base system prompt |
-| `plugins` | ES modules that extend the app; see the glen core README |
+| `plugins` | ES modules that extend the app; see the glen core README and the geo-query-wasm plugin below |
 
 ## Collection entries
 
@@ -85,6 +85,25 @@ The legacy form `["in", "field", "a", "b"]` does nothing in current MapLibre.
 ```
 
 The first model is the default. Keep to models that OpenRouter serves through a zero-data-retention provider; its `GET https://openrouter.ai/api/v1/endpoints/zdr` lists them. Never put an API key in this repository. `config.json` is ignored by git for that reason.
+
+## geo-query-wasm plugin
+
+```json
+"plugins": [{
+    "url": "plugins/geo-query-wasm.js",
+    "options": { "include": ["query"], "worker": { "discovery": false } }
+}]
+```
+
+| Option | Meaning |
+|---|---|
+| `include` or `exclude` | Tool names to keep or drop. Keep `include: ["query"]`: geo-query's STAC tools read GLEN's catalog, not this app's, and glen core cannot draw its hex tiles |
+| `worker` | geo-query-wasm's worker options, such as `allowedDirectories`, `timeout` and `workers` |
+| `prompt` | An MCP prompt to append to the system prompt, such as `geospatial-analyst` |
+
+The plugin lists every collection's Parquet `data` asset in the system prompt. The SQL can read only `s3://` paths and https URLs on source.coop and NRP unless `worker.allowedDirectories` adds the catalog's host. Check a new catalog's data host before relying on SQL.
+
+To move the geo-query-wasm pin, change the commit in `plugins/geo-query-worker.js` and check that jsDelivr serves it. Its tags lag main; v0.3.1 has no query time limit or hex tools. The glen-harness tag in `plugins/geo-query-wasm.js` follows the one glen core's `main.js` imports.
 
 ## GLEN pin
 

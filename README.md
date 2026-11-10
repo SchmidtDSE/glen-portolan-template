@@ -1,16 +1,16 @@
 # glen-portolan-template
 
-This repository is a template for a GLEN map app over any [Portolan](https://www.portolan-sdi.org/) catalog. The app shows the catalog's PMTiles and COG layers on a map, and a chat agent changes the map on request: it shows and hides layers, filters features, applies the publisher's styles or new colours, recolours rasters and moves the view. The app is two static files with no server of its own, and each visitor brings their own OpenRouter key.
+This repository is a template for a GLEN map app over any [Portolan](https://www.portolan-sdi.org/) catalog. The app shows the catalog's PMTiles and COG layers on a map, and a chat agent changes the map on request: it shows and hides layers, filters features, applies the publisher's styles or new colours, recolours rasters and moves the view. The agent can also run SQL over the collections' GeoParquet files with [geo-query-wasm](https://github.com/SchmidtDSE/geo-query-wasm), which runs DuckDB in the visitor's browser. The app is static files with no server of its own, and each visitor brings their own OpenRouter key.
 
 - **Template repository:** https://github.com/SchmidtDSE/glen-portolan-template
 - **Create your own:** https://github.com/new?template_owner=SchmidtDSE&template_name=glen-portolan-template
-- **Example app:** https://schmidtdse.github.io/glen-portolan-template/ shows Jamaica after Hurricane Melissa
+- **Example app:** https://schmidtdse.github.io/glen-portolan-template/ shows the [City of St. Louis open data mirror](https://data.source.coop/tge-labs/st-louis-open-data-mirror/catalog.json): neighborhoods, wards, 1930s redlining grades, the 2024 market value analysis, vacant and assessed parcels, census tracts, lead service lines, the May 2025 tornado and the floodplain
 
-The app runs on glen core, the map-only part of [GLEN](https://github.com/SchmidtDSE/glen). Apps that also need SQL over MCP, hex layers or a server-side key start from [glen-template](https://github.com/SchmidtDSE/glen-template) instead.
+The app runs on glen core, the map-only part of [GLEN](https://github.com/SchmidtDSE/glen). Apps that need SQL on a server, hex layers or a server-side key start from [glen-template](https://github.com/SchmidtDSE/glen-template) instead.
 
 ## Portolan data
 
-Any static catalog that follows the [Portolan specification](https://github.com/portolan-sdi/portolan-spec) works. The [Portolan registry](https://www.portolan-sdi.org/registry) lists the independently hosted public catalogs, 88 of them in November 2026, and its **Copy address** button gives the URL of each root `catalog.json`. The registry's source is [portolan-sdi/portolan-registry](https://github.com/portolan-sdi/portolan-registry). The [Portolan browser](https://browser.portolan-sdi.org/) opens any of them for a look before you build an app.
+Any static catalog that follows the [Portolan specification](https://github.com/portolan-sdi/portolan-spec) works. The [Portolan registry](https://www.portolan-sdi.org/registry) lists the independently hosted public catalogs, 89 of them in November 2026, and its **Copy address** button gives the URL of each root `catalog.json`. The registry's source is [portolan-sdi/portolan-registry](https://github.com/portolan-sdi/portolan-registry). The [Portolan browser](https://browser.portolan-sdi.org/) opens any of them for a look before you build an app.
 
 glen core draws two kinds of asset:
 
@@ -18,6 +18,27 @@ glen core draws two kinds of asset:
 - rasters from a Cloud-Optimized GeoTIFF listed on the collection as an asset with the `data` role.
 
 A collection with only GeoParquet or other files has nothing to draw and is skipped. Rasters published as one COG per item are not drawn yet.
+
+## SQL in the browser
+
+The `plugins` entry in `layers-input.json` loads `plugins/geo-query-wasm.js`. It starts geo-query-wasm in a Web Worker and adds geo-query's `query` tool to the map tools. The system prompt lists the GeoParquet or Parquet asset with the `data` role of every loaded collection, so the agent can count, sum and rank the features behind each layer and join layers on shared keys. DuckDB loads in about 4 seconds and reads only the byte ranges a query needs. No query leaves the browser.
+
+The worker's SQL can read only `s3://` paths and https URLs on source.coop and NRP. A catalog hosted elsewhere, such as the CARTO mirrors on `storage.googleapis.com`, needs its host added to the worker's allowed directories:
+
+```json
+"plugins": [{
+    "url": "plugins/geo-query-wasm.js",
+    "options": {
+        "include": ["query"],
+        "worker": {
+            "discovery": false,
+            "allowedDirectories": ["s3://", "https://data.source.coop/", "https://storage.googleapis.com/carto-open-catalogs/"]
+        }
+    }
+}]
+```
+
+`worker` takes geo-query-wasm's worker options, listed in its [README](https://github.com/SchmidtDSE/geo-query-wasm#using-geo-query-wasm-from-an-app). `include` keeps only `query`. geo-query's catalog tools read GLEN's catalog rather than this app's, and its hex tiles need a map layer type that glen core does not have. To drop SQL, delete the `plugins` entry.
 
 ## Quick start
 
@@ -69,13 +90,14 @@ The app reads everything else from the catalog. Tile layer names and attribute n
 
 ```
 index.html              the page; loads MapLibre, PMTiles and glen core from CDNs
-layers-input.json       the collections to show, the map view, links, models and welcome text
+layers-input.json       the collections to show, the map view, links, plugins, models and welcome text
+plugins/                the geo-query-wasm plugin and the worker file it starts
 inspect_collection.py   prints what the app will draw from a catalog or collection
 AGENTS.md               the configuration reference, for people and coding agents
 .github/workflows/      deploys the repository to GitHub Pages on every push to main
 ```
 
-You configure the app by editing `layers-input.json` and the title in `index.html`. You do not write JavaScript.
+You configure the app by editing `layers-input.json` and the title in `index.html`. You do not write JavaScript; the files in `plugins/` work unchanged over any catalog.
 
 ## Local development
 
@@ -100,10 +122,11 @@ OpenRouter applies zero data retention only when the account requires it, under 
 
 ## GLEN version
 
-`index.html` loads glen core from jsDelivr, pinned to a release of `SchmidtDSE/glen`, currently `v3.40.0`. Every `cdn.jsdelivr.net/gh/SchmidtDSE/glen@` URL in the file names the same tag, and they change together. [AGENTS.md](AGENTS.md) describes how to move the pin.
+`index.html` loads glen core from jsDelivr, pinned to a release of `SchmidtDSE/glen`, currently `v3.45.1`. Every `cdn.jsdelivr.net/gh/SchmidtDSE/glen@` URL in the file names the same tag, and they change together. [AGENTS.md](AGENTS.md) describes how to move the pin.
 
 ## More resources
 
-- [glen core](https://github.com/SchmidtDSE/glen/blob/v3.40.0/core/README.md): how the app reads Portolan catalogs, its plugins and its limitations
+- [glen core](https://github.com/SchmidtDSE/glen/blob/v3.45.1/core/README.md): how the app reads Portolan catalogs, its plugins and its limitations
 - [Portolan specification](https://github.com/portolan-sdi/portolan-spec) and [Portolan CLI](https://cli.portolan-sdi.org/), for publishing a catalog of your own
+- [geo-query-wasm](https://github.com/SchmidtDSE/geo-query-wasm): geo-query's MCP server in a Web Worker, which the plugin starts
 - [glen-template](https://github.com/SchmidtDSE/glen-template): the full GLEN app with SQL over MCP
