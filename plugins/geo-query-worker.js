@@ -7,7 +7,6 @@
  * src/worker.js and imports it from jsDelivr. The worker reads the entry's
  * `worker_config` from this file's URL (`?config=…`).
  *
- * The pin names a commit of SchmidtDSE/geo-query-wasm. Its latest tag, v0.3.1,
- * predates the query time limit and the hex tools.
+ * The pin names a release of SchmidtDSE/geo-query-wasm.
  */
-import 'https://cdn.jsdelivr.net/gh/SchmidtDSE/geo-query-wasm@b07fa796a653c2e4edbedb9e35711454740cf7f4/src/worker.js';
+import 'https://cdn.jsdelivr.net/gh/SchmidtDSE/geo-query-wasm@v0.6.0/src/worker.js';
