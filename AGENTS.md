@@ -108,8 +108,6 @@ The first model is the default. Keep to models that OpenRouter serves through a 
 
 The plugin lists every collection's Parquet `data` asset in the system prompt. By default the SQL reads any `s3://` path and https URLs on source.coop and NRP. For a catalog hosted elsewhere, add its host to `allowedEndpoints` (S3 hosts a query names with `s3_endpoint`, the route `get_schema` gives for other hosts) or `allowedDirectories` (paths SQL may read). Check a new catalog's data host before relying on SQL.
 
-Geometry columns reach SQL as WKB blobs, so spatial SQL needs `ST_GeomFromWKB(geometry)`.
-
 To move the geo-query-wasm pin, change the commit in `plugins/geo-query-worker.js` and check that jsDelivr serves it. Its tags lag main; v0.3.1 has no query time limit or hex tools.
 
 ## GLEN pin
