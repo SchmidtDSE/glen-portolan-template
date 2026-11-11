@@ -88,6 +88,14 @@
             ]
         },
         {
+            "url": "https://s3-west.nrp-nautilus.io/public-population/ghs-pop-2020/stac-collection.json",
+            "display_name": "Population in 2020 (GHS-POP)",
+            "group": "People",
+            "colormap": "magma",
+            "rescale": "0,60",
+            "opacity": 0.8
+        },
+        {
             "url": "https://data.source.coop/tge-labs/st-louis-open-data-mirror/health/lead-service-lines/collection.json",
             "display_name": "Lead service lines",
             "group": "Health",
@@ -169,6 +177,7 @@
         "examples": [
             "Show the 1930s redlining grades over the 2024 market value clusters",
             "Which ten neighborhoods have the most vacant parcels?",
+            "How many people live in each ward, from the 2020 population grid?",
             "How many service lines are lead, and how many are still unknown?",
             "Show the May 2025 tornado damage coloured by EF scale and zoom to it"
         ]

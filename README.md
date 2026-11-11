@@ -4,7 +4,7 @@ This repository is a template for a GLEN map app over any [Portolan](https://www
 
 - **Template repository:** https://github.com/SchmidtDSE/glen-portolan-template
 - **Create your own:** https://github.com/new?template_owner=SchmidtDSE&template_name=glen-portolan-template
-- **Example app:** https://schmidtdse.github.io/glen-portolan-template/ shows the [City of St. Louis open data mirror](https://data.source.coop/tge-labs/st-louis-open-data-mirror/catalog.json): neighborhoods, wards, 1930s redlining grades, the 2024 market value analysis, vacant and assessed parcels, census tracts, lead service lines, the May 2025 tornado and the floodplain
+- **Example app:** https://schmidtdse.github.io/glen-portolan-template/ shows the [City of St. Louis open data mirror](https://data.source.coop/tge-labs/st-louis-open-data-mirror/catalog.json): neighborhoods, wards, 1930s redlining grades, the 2024 market value analysis, vacant and assessed parcels, census tracts, lead service lines, the May 2025 tornado and the floodplain. It adds 2020 population from GLEN's GHS-POP collection, a COG with an H3 hex copy, so the agent can sum population inside any boundary.
 
 The app runs on glen core, the map-only part of [GLEN](https://github.com/SchmidtDSE/glen). Apps that need SQL on a server, hex layers or a server-side key start from [glen-template](https://github.com/SchmidtDSE/glen-template) instead.
 
