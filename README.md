@@ -21,24 +21,31 @@ A collection with only GeoParquet or other files has nothing to draw and is skip
 
 ## SQL in the browser
 
-The `plugins` entry in `layers-input.json` loads `plugins/geo-query-wasm.js`. It starts geo-query-wasm in a Web Worker and adds geo-query's `query` tool to the map tools. The system prompt lists the GeoParquet or Parquet asset with the `data` role of every loaded collection, so the agent can count, sum and rank the features behind each layer and join layers on shared keys. DuckDB loads in about 4 seconds and reads only the byte ranges a query needs. No query leaves the browser.
-
-The worker's SQL can read only `s3://` paths and https URLs on source.coop and NRP. A catalog hosted elsewhere, such as the CARTO mirrors on `storage.googleapis.com`, needs its host added to the worker's allowed directories:
+The `plugins` entry in `layers-input.json` loads glen core's MCP plugin with one server, [geo-query-wasm](https://github.com/SchmidtDSE/geo-query-wasm), running in a Web Worker. The plugin adds geo-query's `query` tool to the map tools, answers `get_schema` and `get_stac_details` from the collections the app loaded, and lists in the system prompt the GeoParquet or Parquet asset with the `data` role of every loaded collection. The agent can then count, sum and rank the features behind each layer and join layers on shared keys. DuckDB loads in about 5 seconds and reads only the byte ranges a query needs. No query leaves the browser.
 
 ```json
 "plugins": [{
-    "url": "plugins/geo-query-wasm.js",
-    "options": {
-        "include": ["query"],
-        "worker": {
-            "discovery": false,
-            "allowedDirectories": ["s3://", "https://data.source.coop/", "https://storage.googleapis.com/carto-open-catalogs/"]
-        }
-    }
+    "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v3.47.0/core/plugins/mcp.js",
+    "options": { "servers": [{
+        "worker": "plugins/geo-query-worker.js",
+        "worker_config": { "discovery": false },
+        "include": ["query"]
+    }] }
 }]
 ```
 
-`worker` takes geo-query-wasm's worker options, listed in its [README](https://github.com/SchmidtDSE/geo-query-wasm#using-geo-query-wasm-from-an-app). `include` keeps only `query`. geo-query's catalog tools read GLEN's catalog rather than this app's, and its hex tiles need a map layer type that glen core does not have. To drop SQL, delete the `plugins` entry.
+A page may start a Worker only from its own origin, so `plugins/geo-query-worker.js` is a one-line file that imports geo-query-wasm's worker from jsDelivr. `include` keeps only `query`; geo-query-wasm's hex tiles need a map layer type that glen core does not have. To drop SQL, delete the `plugins` entry.
+
+By default the SQL can read any `s3://` path and https URLs on source.coop and NRP. A catalog hosted elsewhere, such as the CARTO mirrors on Google Cloud Storage, needs its host in `worker_config`: `allowedDirectories` lists the paths SQL may read, and `allowedEndpoints` the S3 hosts a query may name with `s3_endpoint`, which is how `get_schema` points the model at other hosts. A list given there replaces geo-query-wasm's default list, so repeat the defaults you keep:
+
+```json
+"worker_config": {
+    "discovery": false,
+    "allowedEndpoints": ["s3-west.nrp-nautilus.io", "storage.googleapis.com"]
+}
+```
+
+The [glen core README](https://github.com/SchmidtDSE/glen/blob/v3.47.0/core/README.md) and geo-query-wasm's [README](https://github.com/SchmidtDSE/geo-query-wasm#using-geo-query-wasm-from-an-app) list the other options.
 
 ## Quick start
 
@@ -91,13 +98,13 @@ The app reads everything else from the catalog. Tile layer names and attribute n
 ```
 index.html              the page; loads MapLibre, PMTiles and glen core from CDNs
 layers-input.json       the collections to show, the map view, links, plugins, models and welcome text
-plugins/                the geo-query-wasm plugin and the worker file it starts
+plugins/                the worker file that starts geo-query-wasm
 inspect_collection.py   prints what the app will draw from a catalog or collection
 AGENTS.md               the configuration reference, for people and coding agents
 .github/workflows/      deploys the repository to GitHub Pages on every push to main
 ```
 
-You configure the app by editing `layers-input.json` and the title in `index.html`. You do not write JavaScript; the files in `plugins/` work unchanged over any catalog.
+You configure the app by editing `layers-input.json` and the title in `index.html`. You do not write JavaScript; `plugins/geo-query-worker.js` works unchanged over any catalog.
 
 ## Local development
 
@@ -122,11 +129,11 @@ OpenRouter applies zero data retention only when the account requires it, under 
 
 ## GLEN version
 
-`index.html` loads glen core from jsDelivr, pinned to a release of `SchmidtDSE/glen`, currently `v3.45.1`. Every `cdn.jsdelivr.net/gh/SchmidtDSE/glen@` URL in the file names the same tag, and they change together. [AGENTS.md](AGENTS.md) describes how to move the pin.
+`index.html` loads glen core from jsDelivr, pinned to a release of `SchmidtDSE/glen`, currently `v3.47.0`. Every `cdn.jsdelivr.net/gh/SchmidtDSE/glen@` URL in `index.html` and `layers-input.json` names the same tag, and they change together. [AGENTS.md](AGENTS.md) describes how to move the pin.
 
 ## More resources
 
-- [glen core](https://github.com/SchmidtDSE/glen/blob/v3.45.1/core/README.md): how the app reads Portolan catalogs, its plugins and its limitations
+- [glen core](https://github.com/SchmidtDSE/glen/blob/v3.47.0/core/README.md): how the app reads Portolan catalogs, its plugins and its limitations
 - [Portolan specification](https://github.com/portolan-sdi/portolan-spec) and [Portolan CLI](https://cli.portolan-sdi.org/), for publishing a catalog of your own
 - [geo-query-wasm](https://github.com/SchmidtDSE/geo-query-wasm): geo-query's MCP server in a Web Worker, which the plugin starts
 - [glen-template](https://github.com/SchmidtDSE/glen-template): the full GLEN app with SQL over MCP

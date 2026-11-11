@@ -125,14 +125,19 @@
     },
     "plugins": [
         {
-            "url": "plugins/geo-query-wasm.js",
+            "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v3.47.0/core/plugins/mcp.js",
             "options": {
-                "include": [
-                    "query"
-                ],
-                "worker": {
-                    "discovery": false
-                }
+                "servers": [
+                    {
+                        "worker": "plugins/geo-query-worker.js",
+                        "worker_config": {
+                            "discovery": false
+                        },
+                        "include": [
+                            "query"
+                        ]
+                    }
+                ]
             }
         }
     ],
