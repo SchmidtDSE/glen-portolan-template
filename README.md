@@ -6,7 +6,7 @@ This repository is a template for a GLEN map app over any [Portolan](https://www
 - **Create your own:** https://github.com/new?template_owner=SchmidtDSE&template_name=glen-portolan-template
 - **Example app:** https://schmidtdse.github.io/glen-portolan-template/ shows the [City of St. Louis open data mirror](https://data.source.coop/tge-labs/st-louis-open-data-mirror/catalog.json): neighborhoods, wards, 1930s redlining grades, the 2024 market value analysis, vacant and assessed parcels, census tracts, lead service lines, the May 2025 tornado and the floodplain. It adds 2020 population from GLEN's GHS-POP collection, a COG with an H3 hex copy, so the agent can sum population inside any boundary.
 
-The app runs on glen core, the map-only part of [GLEN](https://github.com/SchmidtDSE/glen). Apps that need SQL on a server, hex layers or a server-side key start from [glen-template](https://github.com/SchmidtDSE/glen-template) instead.
+The app runs on glen core, the map-only part of [GLEN](https://github.com/SchmidtDSE/glen). Apps that need SQL on a server or a server-side key start from [glen-template](https://github.com/SchmidtDSE/glen-template) instead.
 
 ## Portolan data
 
@@ -39,7 +39,7 @@ The `plugins` entry in `layers-input.json` loads glen core's MCP plugin with one
 
 The second entry puts CSV and GeoJSON buttons under each query result in the chat, so a visitor can save every row behind an answer, up to `max_rows`, not only the 50 the model saw.
 
-A page may start a Worker only from its own origin, so `plugins/geo-query-worker.js` is a one-line file that imports geo-query-wasm's worker from jsDelivr. `include` keeps only `query`; geo-query-wasm's hex tiles need a map layer type that glen core does not have. To drop SQL, delete both `plugins` entries.
+A page may start a Worker only from its own origin, so `plugins/geo-query-worker.js` is a one-line file that imports geo-query-wasm's worker from jsDelivr. `include` keeps only `query`. glen core's `hex.js` plugin can also draw the H3 hex tiles geo-query-wasm builds in the browser; [AGENTS.md](AGENTS.md) describes how to turn it on. To drop SQL, delete both `plugins` entries.
 
 By default the SQL can read any `s3://` path and https URLs on source.coop and NRP. A catalog hosted elsewhere, such as the CARTO mirrors on Google Cloud Storage, needs its host in `worker_config`: `allowedDirectories` lists the paths SQL may read, and `allowedEndpoints` the S3 hosts a query may name with `s3_endpoint`, which is how `get_schema` points the model at other hosts. A list given there replaces geo-query-wasm's default list, so repeat the defaults you keep:
 

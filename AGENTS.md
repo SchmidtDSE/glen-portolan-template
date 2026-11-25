@@ -103,7 +103,7 @@ The first model is the default. Keep to models that OpenRouter serves through a 
 |---|---|
 | `worker` | The worker file, relative to the page |
 | `worker_config` | geo-query-wasm's worker options, such as `allowedDirectories`, `allowedEndpoints`, `timeout` and `workers`. A list given here replaces geo-query-wasm's default list |
-| `include` or `exclude` | Tool names to keep or drop. Keep `include: ["query"]`: glen core cannot draw geo-query-wasm's hex tiles, and the plugin answers the catalog tools itself |
+| `include` or `exclude` | Tool names to keep or drop. The template keeps only `query`; the plugin answers the catalog tools itself. For hex layers, add `register_hex_tiles` and `get_hex_tile_status` and load `core/plugins/hex.js` (see below) |
 | `prompt` | An MCP prompt to append to the system prompt, such as `geospatial-analyst` |
 
 The agent finds each collection's Parquet `data` asset and its columns with `get_schema`, which the plugin answers from the loaded collections. By default the SQL reads any `s3://` path and https URLs on source.coop and NRP. For a catalog hosted elsewhere, add its host to `allowedEndpoints` (S3 hosts a query names with `s3_endpoint`, the route `get_schema` gives for other hosts) or `allowedDirectories` (paths SQL may read). Check a new catalog's data host before relying on SQL.
@@ -112,11 +112,22 @@ The agent finds each collection's Parquet `data` asset and its columns with `get
 
 The second `plugins` entry, glen core's `downloads.js`, puts CSV and GeoJSON buttons under each `query` result in the chat. A button runs the same SQL again in the browser and saves every row up to `max_rows` (default 100,000), not only the 50 the model saw. GeoJSON needs a GEOMETRY column in the result. It needs the MCP plugin's `query` tool; delete both entries together to drop SQL.
 
-To move the geo-query-wasm pin, change the release tag (or a commit) in `plugins/geo-query-worker.js` and check that jsDelivr serves it. The template pins v0.6.0.
+## Hex tile layers
+
+glen core's `hex.js` plugin draws H3 hex tiles that geo-query-wasm builds in the browser with `register_hex_tiles`. The template does not load it. To add hex layers, list `register_hex_tiles` and `get_hex_tile_status` in the server's `include`, and add the plugin, with `geo_query_wasm` naming the same release as `plugins/geo-query-worker.js`:
+
+```json
+{ "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v4.6.0/core/plugins/hex.js",
+  "options": { "geo_query_wasm": "v0.6.0" } }
+```
+
+The [GLEN configuration guide](https://github.com/SchmidtDSE/glen/blob/v4.6.0/docs/guide/configuration.md#hex-tile-layers) describes its other options, including hex layers drawn at start.
+
+To move the geo-query-wasm pin, change the release tag (or a commit) in `plugins/geo-query-worker.js` and check that jsDelivr serves it, and match `geo_query_wasm` in the hex plugin if the app loads it. The template pins v0.6.0.
 
 ## GLEN pin
 
-Every `cdn.jsdelivr.net/gh/SchmidtDSE/glen@<ref>` URL names the same ref: in `index.html` the favicon and `core/main.js`, and in `layers-input.json` the MCP and downloads plugins. To move the pin, replace the ref in all four and check that jsDelivr serves it:
+Every `cdn.jsdelivr.net/gh/SchmidtDSE/glen@<ref>` URL names the same ref: in `index.html` the favicon and `core/main.js`, and in `layers-input.json` the MCP and downloads plugins, and the hex plugin if the app adds it. To move the pin, replace the ref in all of them and check that jsDelivr serves it:
 
 ```bash
 curl -sI https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@<ref>/core/main.js | head -1   # HTTP/2 200
