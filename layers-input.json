@@ -133,7 +133,7 @@
     },
     "plugins": [
         {
-            "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v3.47.0/core/plugins/mcp.js",
+            "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v4.6.0/core/plugins/mcp.js",
             "options": {
                 "servers": [
                     {
@@ -146,6 +146,12 @@
                         ]
                     }
                 ]
+            }
+        },
+        {
+            "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v4.6.0/core/plugins/downloads.js",
+            "options": {
+                "max_rows": 100000
             }
         }
     ],

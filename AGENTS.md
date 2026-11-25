@@ -90,7 +90,7 @@ The first model is the default. Keep to models that OpenRouter serves through a 
 
 ```json
 "plugins": [{
-    "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v3.47.0/core/plugins/mcp.js",
+    "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v4.6.0/core/plugins/mcp.js",
     "options": { "servers": [{
         "worker": "plugins/geo-query-worker.js",
         "worker_config": { "discovery": false },
@@ -106,13 +106,17 @@ The first model is the default. Keep to models that OpenRouter serves through a 
 | `include` or `exclude` | Tool names to keep or drop. Keep `include: ["query"]`: glen core cannot draw geo-query-wasm's hex tiles, and the plugin answers the catalog tools itself |
 | `prompt` | An MCP prompt to append to the system prompt, such as `geospatial-analyst` |
 
-The plugin lists every collection's Parquet `data` asset in the system prompt. By default the SQL reads any `s3://` path and https URLs on source.coop and NRP. For a catalog hosted elsewhere, add its host to `allowedEndpoints` (S3 hosts a query names with `s3_endpoint`, the route `get_schema` gives for other hosts) or `allowedDirectories` (paths SQL may read). Check a new catalog's data host before relying on SQL.
+The agent finds each collection's Parquet `data` asset and its columns with `get_schema`, which the plugin answers from the loaded collections. By default the SQL reads any `s3://` path and https URLs on source.coop and NRP. For a catalog hosted elsewhere, add its host to `allowedEndpoints` (S3 hosts a query names with `s3_endpoint`, the route `get_schema` gives for other hosts) or `allowedDirectories` (paths SQL may read). Check a new catalog's data host before relying on SQL.
+
+## Query downloads
+
+The second `plugins` entry, glen core's `downloads.js`, puts CSV and GeoJSON buttons under each `query` result in the chat. A button runs the same SQL again in the browser and saves every row up to `max_rows` (default 100,000), not only the 50 the model saw. GeoJSON needs a GEOMETRY column in the result. It needs the MCP plugin's `query` tool; delete both entries together to drop SQL.
 
 To move the geo-query-wasm pin, change the release tag (or a commit) in `plugins/geo-query-worker.js` and check that jsDelivr serves it. The template pins v0.6.0.
 
 ## GLEN pin
 
-Every `cdn.jsdelivr.net/gh/SchmidtDSE/glen@<ref>` URL names the same ref: in `index.html` the favicon, three stylesheets and `core/main.js`, and in `layers-input.json` the MCP plugin. To move the pin, replace the ref in all six and check that jsDelivr serves it:
+Every `cdn.jsdelivr.net/gh/SchmidtDSE/glen@<ref>` URL names the same ref: in `index.html` the favicon and `core/main.js`, and in `layers-input.json` the MCP and downloads plugins. To move the pin, replace the ref in all four and check that jsDelivr serves it:
 
 ```bash
 curl -sI https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@<ref>/core/main.js | head -1   # HTTP/2 200
