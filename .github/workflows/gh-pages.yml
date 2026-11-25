@@ -15,10 +15,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  # Upload and deploy run as separate jobs. When deploy-pages runs right
+  # after the upload in the same job, it can look up the artifact before
+  # GitHub lists it and fail with "No artifacts named github-pages"
+  # (actions/deploy-pages#451). The second job starts late enough to find it.
+  upload:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,6 +32,13 @@ jobs:
         with:
           path: .
 
+  deploy:
+    needs: upload
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
