@@ -138,9 +138,6 @@
                 "servers": [
                     {
                         "worker": "plugins/geo-query-worker.js",
-                        "worker_config": {
-                            "discovery": false
-                        },
                         "include": [
                             "query"
                         ]

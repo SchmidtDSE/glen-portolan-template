@@ -28,7 +28,6 @@ The `plugins` entry in `layers-input.json` loads glen core's MCP plugin with one
     "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v4.6.0/core/plugins/mcp.js",
     "options": { "servers": [{
         "worker": "plugins/geo-query-worker.js",
-        "worker_config": { "discovery": false },
         "include": ["query"]
     }] }
 }, {
@@ -45,7 +44,6 @@ By default the SQL can read any `s3://` path and https URLs on source.coop and N
 
 ```json
 "worker_config": {
-    "discovery": false,
     "allowedEndpoints": ["s3-west.nrp-nautilus.io", "storage.googleapis.com"]
 }
 ```

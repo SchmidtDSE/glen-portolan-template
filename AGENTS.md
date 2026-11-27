@@ -93,7 +93,6 @@ The first model is the default. Keep to models that OpenRouter serves through a 
     "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v4.6.0/core/plugins/mcp.js",
     "options": { "servers": [{
         "worker": "plugins/geo-query-worker.js",
-        "worker_config": { "discovery": false },
         "include": ["query"]
     }] }
 }]
@@ -118,12 +117,12 @@ glen core's `hex.js` plugin draws H3 hex tiles that geo-query-wasm builds in the
 
 ```json
 { "url": "https://cdn.jsdelivr.net/gh/SchmidtDSE/glen@v4.6.0/core/plugins/hex.js",
-  "options": { "geo_query_wasm": "v0.6.0" } }
+  "options": { "geo_query_wasm": "v0.7.0" } }
 ```
 
 The [GLEN configuration guide](https://github.com/SchmidtDSE/glen/blob/v4.6.0/docs/guide/configuration.md#hex-tile-layers) describes its other options, including hex layers drawn at start.
 
-To move the geo-query-wasm pin, change the release tag (or a commit) in `plugins/geo-query-worker.js` and check that jsDelivr serves it, and match `geo_query_wasm` in the hex plugin if the app loads it. The template pins v0.6.0.
+To move the geo-query-wasm pin, change the release tag (or a commit) in `plugins/geo-query-worker.js` and check that jsDelivr serves it, and match `geo_query_wasm` in the hex plugin if the app loads it. The template pins v0.7.0.
 
 ## GLEN pin
 
